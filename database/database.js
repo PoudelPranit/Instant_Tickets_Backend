@@ -33,7 +33,6 @@
 
 import { MongoClient } from 'mongodb';
 import {config} from 'dotenv';
-import fs from 'fs';
 
  config();
 // Replace with your MongoDB connection string
