@@ -41,17 +41,19 @@ const uri = process.env.MongoDB_ConnectionString;
 let client;
 let userCollection;
 let eventCollection;
+let ticketCollection;
 const connectToDatabase = async () => {
-    if (client && userCollection && eventCollection) return { client, userCollection, eventCollection };
+    if (client && userCollection && eventCollection && ticketCollection) return { client, userCollection, eventCollection , ticketCollection};
     client = new MongoClient(uri);
     try {
         await client.connect(); // Connect to MongoDB cluster   
         const db = client.db('InstantTickets'); // Access the database
         userCollection = db.collection('Users'); // Access the collection      
         eventCollection = db.collection('Events'); // Access the collection    
+        ticketCollection = db.collection('Tickets');
         console.log('Connected successfully to MongoDB');
         console.log('Database up!\n');
-        return { client, userCollection, eventCollection };
+        return { client, userCollection, eventCollection, ticketCollection};
     } catch (error) {
         console.error('MongoDB connection error:', error);
         throw error; // Re-throw error for handling at a higher level

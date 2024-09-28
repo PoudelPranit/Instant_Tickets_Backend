@@ -3,6 +3,7 @@ import cors from 'cors';
 import {connectToDatabase} from './database/database.js';
 import userRouter from './routes/userRoutes.js';
 import eventRouter from './routes/eventRoutes.js';
+import ticketRouter from './routes/ticketRoutes.js';
 
 
 //config
@@ -13,7 +14,7 @@ app.use(express.json());
 
 app.use("/instanttickets", userRouter);
 app.use("/instanttickets", eventRouter);
-
+app.use("/instanttickets", ticketRouter);
 
 const allowedOrigins = process.env.NODE_ENV === 'development'
     ? [process.env.DEVLOPMENT_URL]
