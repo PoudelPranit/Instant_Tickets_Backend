@@ -1,7 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import {connectToDatabase} from './database/database.js';
-//import appRouter from './routes/userRoutes.js';
+import userRouter from './routes/userRoutes.js';
+import eventRouter from './routes/eventRoutes.js';
 
 
 //config
@@ -10,12 +11,13 @@ const app = express();
 //middleware
 app.use(express.json());
 
-//app.use("/instanttickets", appRouter);
+app.use("/instanttickets", userRouter);
+app.use("/instanttickets", eventRouter);
 
 
-const allowedOrigins = process.env.NODE_ENV === 'production'
-    ? [process.env.PRODUCTION_URL]
-    : [process.env.DEVLOPMENT_URL];
+const allowedOrigins = process.env.NODE_ENV === 'development'
+    ? [process.env.DEVLOPMENT_URL]
+    : [process.env.PRODUCTION_URL];
     // console.log("Environment:", process.env.NODE_ENV);
     // console.log("Allowed Origins:", allowedOrigins);
     // console.log("Allowed Origins:", allowedOrigins);
