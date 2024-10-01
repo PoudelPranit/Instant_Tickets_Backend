@@ -60,3 +60,35 @@ export const update = async (userId, updatedData) => {
     }
 };
 
+
+export const login = async (email, password) => {
+    console.log("Login attempt for:", email);
+
+    try {
+        // Connect to the database and get the user collection
+        const { userCollection } = await connectToDatabase();
+
+        // Find the user by email
+        const user = await userCollection.findOne({ email });
+
+        // If no user is found, return null
+        if (!user) {
+            console.log('User not found');
+            return null;
+        }
+
+        // Assuming you have a function to validate passwords
+        if (user.email == email && user.password == password){
+            console.log('User login successful:', user);
+            return user;  // Return the user data if login is successful
+        }
+        else{
+            console.log('Invalid password');
+            return null; // Invalid password
+        }     
+
+    } catch (error) {
+        console.error('Error occurred while logging in:', error);
+        throw error; // Re-throw the error for handling at a higher level
+    }
+};

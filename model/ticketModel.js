@@ -40,39 +40,58 @@ export const create = async (eventId, userId, ticketCount, ticketPrice, totalAmo
 };
 
 
-// export const update = async (eventId, updatedData) => {
-//     console.log("I am here");
-//     console.log("ID",eventId);
-//     console.log("body",updatedData);
+export const update = async (eventId, ticketId, userId, updatedTicketCount) => {
+    console.log("I am here");
+    console.log("ID", eventId, ticketId, userId);
 
-//     try {
-//         // Connect to the database and get the user collection
-//         const { eventCollection } = await connectToDatabase();
+    try {
+        // Connect to the database and get the user collection
+        const { eventCollection } = await connectToDatabase();
+        const { ticketCollection } = await connectToDatabase();
 
-//         // Ensure userId is a valid ObjectId (if using MongoDB)
-//         const objectId = new ObjectId(eventId);
+        // Ensure userId is a valid ObjectId (if using MongoDB)
+        const event_objectId = new ObjectId(eventId);
+        const ticket_objectId = new ObjectId(ticketId);
 
-//         // Update the user document
-//         const result = await eventCollection.updateOne(
-//             { _id: objectId },  // Find the user by their unique _id
-//             { $set: updatedData }  // Set the fields to be updated
-//         );
+        const currentEvent = await eventCollection.findOne({ _id: event_objectId });
+        const currentTicket = await ticketCollection.findOne({ _id: ticket_objectId });
+        console.log ("current ticket count in ticket",parseInt(currentTicket.ticketCount ));
+        console.log ("current ticket count in event ",parseInt(currentEvent.ticketCount ));
 
-//         if (result.matchedCount === 0) {
-//             console.log('Event not found');
-//             return null;  // User not found
-//         }
-//         console.log('Event  updated successfully:', result);
-//         return result;
-//     } catch (error) {
-//         console.error('Error occurred while updating Event:', error);
-//         throw error; // Re-throw the error for handling at a higher level
-//     }
-// };
+        if (updatedTicketCount - parseInt(currentTicket.ticketCount)> parseInt(currentEvent.ticketCount)) {
+            console.log("Available Ticket count ", parseInt(currentEvent.ticketCount) + parseInt(currentTicket.ticketCount));
+            console.log("You are trying to book ", updatedTicketCount);
+            return null;
+        }
+        else {
+            let availableTickets = parseInt(currentEvent.ticketCount) + parseInt(currentTicket.ticketCount)  - updatedTicketCount;
+            console.log(availableTickets);
+
+            const updatedEventCollection = await eventCollection.updateOne(
+                { _id: event_objectId },  // Find the event by its ID
+                { $set: { ticketCount:availableTickets } }
+            );
+            const updatedTicketCollection = await ticketCollection.updateOne(
+                { _id: ticket_objectId },  // Find the event by its ID
+                { $set: { ticketCount:updatedTicketCount } }
+            );
+            if (updatedEventCollection.matchedCount === 0) {
+                console.log('Error');
+                return null;  // User not found
+            }
+            console.log('  updated successfully:', updatedEventCollection,updatedTicketCollection );
+        }
+
+
+    } catch (error) {
+        console.error('Error occurred while updating Event:', error);
+        throw error; // Re-throw the error for handling at a higher level
+    }
+};
 
 
 
-export const deletee = async (ticketId,eventId) => {
+export const deletee = async (ticketId, eventId) => {
     console.log("Attempting to cancel ticket");
     console.log("ID", ticketId, "ID", eventId);
 
@@ -87,10 +106,10 @@ export const deletee = async (ticketId,eventId) => {
         const eId = new ObjectId(eventId);
         const currentTicket = await ticketCollection.findOne({ _id: tId });
         const currentEvent = await eventCollection.findOne({ _id: eId });
-        console.log("c",currentTicket.ticketCount);
-        console.log("d",currentEvent.ticketCount );
-        
-    
+        console.log("c", currentTicket.ticketCount);
+        console.log("d", currentEvent.ticketCount);
+
+
         const updatedTicketCount = parseInt(currentEvent.ticketCount) + parseInt(currentTicket.ticketCount);
 
 
