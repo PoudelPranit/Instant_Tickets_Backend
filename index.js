@@ -16,15 +16,15 @@ app.use("/instanttickets", userRouter);
 app.use("/instanttickets", eventRouter);
 app.use("/instanttickets", ticketRouter);
 
-const allowedOrigins = process.env.NODE_ENV === 'development'
-    ? [process.env.DEVLOPMENT_URL]
-    : [process.env.PRODUCTION_URL];
-    // console.log("Environment:", process.env.NODE_ENV);
-    // console.log("Allowed Origins:", allowedOrigins);
-    // console.log("Allowed Origins:", allowedOrigins);
+// const allowedOrigins = process.env.NODE_ENV === 'development'
+//     ? [process.env.DEVLOPMENT_URL]
+//     : [process.env.PRODUCTION_URL];
+//     // console.log("Environment:", process.env.NODE_ENV);
+//     // console.log("Allowed Origins:", allowedOrigins);
+//     // console.log("Allowed Origins:", allowedOrigins);
 
 app.use(cors({
-    origin: allowedOrigins,
+   // origin: allowedOrigins,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
 }));
