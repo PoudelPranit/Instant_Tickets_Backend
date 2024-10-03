@@ -19,9 +19,12 @@ export const create = async (firstName, lastName, contact, email, address, passw
 
         // Insert the new user into the Users collection
         const result = await userCollection.insertOne(newUser);
-
-        console.log('User created successfully:', result);
-        return result;
+        if (result.acknowledged === true && result.insertedId) {
+            console.log('User created successfully:', result);
+            return { success: true, message: "success"};
+        } else {
+            return { success: false, message: "fail" };
+        }
     } catch (error) {
         console.error('Error occurred while creating user:', error);
         throw error; // Re-throw the error for handling at a higher level
@@ -79,7 +82,7 @@ export const login = async (email, password) => {
 
         // Assuming you have a function to validate passwords
         if (user.email == email && user.password == password){
-            console.log('User login successful:', user);
+            console.log(user);
             return user;  // Return the user data if login is successful
         }
         else{

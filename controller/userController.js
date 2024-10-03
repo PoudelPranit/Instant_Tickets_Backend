@@ -9,9 +9,14 @@ export const createUser = async (req,res) => {
         return res.status(403).json({message :"body not provided"});
     }
     try {
-        const user = await create(firstName, lastName, contact, email, address, password);
+        const result = await create(firstName, lastName, contact, email, address, password);
         //console.log("I am here");
-        return res.status(403).json({user});
+        if (result.success) {
+            return res.status(200).json({ message: result.message});
+        } else {
+            return res.status(500).json({ message: result.message });
+        }
+        
         
     } catch (error) {
         console.log(error);
@@ -19,8 +24,10 @@ export const createUser = async (req,res) => {
 };
 
 export const loginUser = async (req, res) => {
-    console.log("here");
+    console.log("Request Body:", req.body);
+    console.log(" login request received");
     const { email, password } = req.body;
+    console.log("details",email,password);
 
     // Check if both email and password are provided
     if (!email || !password) {
@@ -40,13 +47,16 @@ export const loginUser = async (req, res) => {
         // Assuming `generateToken` is a function that generates a JWT or session token
 
         // Send the token or user data back to the client
-        return res.status(200).json({ message: "Login successful", user });
+        return res.status(200).json(user);
+
         
     } catch (error) {
         console.log(error);
         return res.status(500).json({ message: "An error occurred during login" });
     }
 };
+
+
 
 
 export const updateUser = async (req, res) => {
@@ -76,7 +86,7 @@ export const updateUser = async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
 
-        return res.status(200).json({ user: updatedUser });
+        return res.status(200).json({ updatedUser });
     } catch (error) {
         console.log(error);
         return res.status(500).json({ message: "An error occurred while updating the user" });

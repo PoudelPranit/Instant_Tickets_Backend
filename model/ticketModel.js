@@ -19,6 +19,7 @@ export const create = async (eventId, userId, ticketCount, ticketPrice, totalAmo
             totalAmount
         };
 
+        
         const objectId = new ObjectId(eventId);
 
         // Insert the new user into the Users collection
@@ -31,7 +32,7 @@ export const create = async (eventId, userId, ticketCount, ticketPrice, totalAmo
             { _id: objectId },  // Find the event by its ID
             { $set: { ticketCount: updatedTicketCount } }
         );
-        console.log('Ticket created successfully:', result);
+        console.log( result);
         return result;
     } catch (error) {
         console.error('Error occurred while creating Ticket:', error);
@@ -61,7 +62,8 @@ export const update = async (eventId, ticketId, userId, updatedTicketCount) => {
         if (updatedTicketCount - parseInt(currentTicket.ticketCount)> parseInt(currentEvent.ticketCount)) {
             console.log("Available Ticket count ", parseInt(currentEvent.ticketCount) + parseInt(currentTicket.ticketCount));
             console.log("You are trying to book ", updatedTicketCount);
-            return null;
+            var currentAvailable = parseInt(currentEvent.ticketCount) + parseInt(currentTicket.ticketCount);
+            return { status: false, message: `Only ${currentAvailable} tickets are available, but you are trying to book ${updatedTicketCount}.` };
         }
         else {
             let availableTickets = parseInt(currentEvent.ticketCount) + parseInt(currentTicket.ticketCount)  - updatedTicketCount;
@@ -79,13 +81,14 @@ export const update = async (eventId, ticketId, userId, updatedTicketCount) => {
                 console.log('Error');
                 return null;  // User not found
             }
-            console.log('  updated successfully:', updatedEventCollection,updatedTicketCollection );
+            return updatedEventCollection,updatedTicketCollection ;
         }
 
 
     } catch (error) {
         console.error('Error occurred while updating Event:', error);
         throw error; // Re-throw the error for handling at a higher level
+        
     }
 };
 
@@ -138,3 +141,85 @@ export const deletee = async (ticketId, eventId) => {
         throw error; // Re-throw the error for handling at a higher level
     }
 };
+
+
+export const view = async (userId) => {
+    console.log("Attempting to view ticket history");
+    try {
+        // Connect to the database and get the event collection
+        const { ticketCollection } = await connectToDatabase();
+
+
+        // find the event document
+        const result = await ticketCollection.find({ userId: userId }).toArray();  // Find all tickets by userId and convert to array
+
+        console.log(result);  // This logs the result on the backend
+        return result  // Send the result as JSON to the frontend
+    } catch (error) {
+        console.error('Error occurred while deleting event:', error);
+        throw error; // Re-throw the error for handling at a higher level
+    }
+};
+
+
+export const viewbyticketid = async (ticketId) => {
+    console.log("Attempting to view ticket history");
+
+    try {
+        // Convert ticketId to ObjectId directly, without destructuring
+        const id = new ObjectId(ticketId);  // This is the correct way to convert ticketId
+        // Connect to the database and get the ticket collection
+        const { ticketCollection } = await connectToDatabase();
+
+        // Find the ticket document by its _id
+        const result = await ticketCollection.findOne({ _id: id });  // Use id directly
+        console.log(result);  // Log the result for debugging
+
+        return result;  // Return the result to the frontend
+    } catch (error) {
+        console.error('Error occurred while viewing ticket:', error);
+        throw error;  // Re-throw the error for handling at a higher level
+    }
+};
+export const viewticketbyeventid = async (eventId) => {
+    console.log("Attempting to view ticket history");
+
+    try {
+        // Convert ticketId to ObjectId directly, without destructuring
+        const id = new ObjectId(eventId);  // This is the correct way to convert ticketId
+        console.log(id);
+        // Connect to the database and get the ticket collection
+        const { ticketCollection } = await connectToDatabase();
+
+        // Find the ticket document by its _id
+        const result = await ticketCollection.findOne({ _id: id });  // Use id directly
+        console.log(result);  // Log the result for debugging
+        return result;  // Return the result to the frontend
+    } catch (error) {
+        console.error('Error occurred while viewing ticket:', error);
+        throw error;  // Re-throw the error for handling at a higher level
+    }
+};
+
+
+
+
+// export const viewbyticketid = async (ticketId) => {
+//     console.log("Attempting to view ticket history ok");
+//     try {
+//         const{id} = new ObjectId(ticketId);
+//         console.log(id ); 
+//         // Connect to the database and get the event collection
+//         const { ticketCollection } = await connectToDatabase();
+
+
+//         // find the event document
+//         const result = await ticketCollection.findOne({ _id: id });  // Find all tickets by userId and convert to array
+//         console.log(result);  // This logs the result on the backend
+//         return result  // Send the result as JSON to the frontend
+//     } catch (error) {
+//         console.error('Error occurred while deleting event:', error);
+//         throw error; // Re-throw the error for handling at a higher level
+//     }
+// };
+

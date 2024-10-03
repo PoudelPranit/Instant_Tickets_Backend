@@ -1,4 +1,4 @@
-import {create,update,deletee} from "../model/eventModel.js";
+import {create,update,deletee, view} from "../model/eventModel.js";
  
 export const createEvent = async (req,res) => {
     console.log("IN THE CONTROLLER");
@@ -11,6 +11,12 @@ export const createEvent = async (req,res) => {
     }
     try {
         const event = await create(performer, venue, date, time, ticketCount, price);
+        if (event.success) {
+            return res.status(200).json({ message: event.message});
+        } else {
+            return res.status(500).json({ message: event.message });
+        }
+        
         //console.log("I am here");
         return res.status(403).json({event});
         
@@ -75,6 +81,26 @@ export const deleteEvent = async (req, res) => {
         return res.status(500).json({ message: "An error occurred while deleting the event" });
     }
 };
+
+export const getAllEvent = async (req, res) => {
+
+    try {
+        // Assuming deleteEventById is a function that deletes the event from the database
+        const allEvent = await view();
+
+        if (!allEvent) {
+            return res.status(404).json({ message: "Event not found" });
+        }
+
+        return res.status(200).json({ allEvent});
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "An error occurred while deleting the event" });
+    }
+};
+
+
+
 
 
 

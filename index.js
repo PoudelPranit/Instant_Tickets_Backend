@@ -9,8 +9,12 @@ import ticketRouter from './routes/ticketRoutes.js';
 //config
 const app = express();
 
+
 //middleware
-app.use(express.json());
+app.use(express.json());// process json
+app.use(express.urlencoded({ extended: true }));
+app.use(cors());
+
 
 app.use("/instanttickets", userRouter);
 app.use("/instanttickets", eventRouter);
@@ -23,11 +27,11 @@ app.use("/instanttickets", ticketRouter);
 //     // console.log("Allowed Origins:", allowedOrigins);
 //     // console.log("Allowed Origins:", allowedOrigins);
 
-app.use(cors({
-   // origin: allowedOrigins,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true,
-}));
+// app.use(cors({
+//     origin: 'http://10.0.0.49:8080',
+//     methods: ['GET', 'POST', 'PUT', 'DELETE'],
+//     credentials: true,
+// }));
 
 //const PORT = process.env.A_PORT;
 

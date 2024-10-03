@@ -22,7 +22,12 @@ export const create = async (performer, venue, date, time, ticketCount, price) =
         const result = await eventCollection.insertOne(newEvent);
 
         console.log('Event created successfully:', result);
-        return result;
+        if (result.acknowledged === true && result.insertedId) {
+            console.log('EVENT created successfully:', result);
+            return { success: true, message: "success"};
+        } else {
+            return { success: false, message: "fail" };
+        }
     } catch (error) {
         console.error('Error occurred while creating Event:', error);
         throw error; // Re-throw the error for handling at a higher level
@@ -32,8 +37,8 @@ export const create = async (performer, venue, date, time, ticketCount, price) =
 
 export const update = async (eventId, updatedData) => {
     console.log("I am here");
-    console.log("ID",eventId);
-    console.log("body",updatedData);
+    console.log("ID", eventId);
+    console.log("body", updatedData);
 
     try {
         // Connect to the database and get the user collection
@@ -85,6 +90,24 @@ export const deletee = async (eventId) => {
         }
         console.log('Event deleted successfully:', result);
         return result;
+    } catch (error) {
+        console.error('Error occurred while deleting event:', error);
+        throw error; // Re-throw the error for handling at a higher level
+    }
+};
+
+
+export const view = async () => {
+    console.log("Attempting to view event");
+    try {
+        // Connect to the database and get the event collection
+        const { eventCollection } = await connectToDatabase();
+
+
+        // find the event document
+        const result = await eventCollection.find({}).toArray();  // Get all events and convert to array
+        console.log(result);  // This logs the result on the backend
+        return result  // Send the result as JSON to the frontend
     } catch (error) {
         console.error('Error occurred while deleting event:', error);
         throw error; // Re-throw the error for handling at a higher level
